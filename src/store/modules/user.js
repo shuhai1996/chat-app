@@ -1,4 +1,4 @@
-import { login } from "../../api/user";
+import { login, registering } from "../../api/user";
 import { setToken } from "../../utils/auth";
 
 const getDefaultState = () => {
@@ -14,14 +14,14 @@ const user = {
   mutations: {
     // 变更状态
     RESET_STATE: (state) => {
-      Object.assign(state, getDefaultState())
+      Object.assign(state, getDefaultState());
     },
     SET_TOKEN: (state, access_token) => {
-      state.access_token = access_token
+      state.access_token = access_token;
     },
     SET_NAME: (state, account) => {
-      state.account = account
-    }
+      state.account = account;
+    },
   },
   actions: {
     // 用户登录
@@ -43,6 +43,25 @@ const user = {
           .catch((error) => {
             reject(error);
           });
+      });
+    },
+    register(commit, userInfo) {
+      console.log(userInfo);
+      const { account, password, password2, promo_code } = userInfo;
+      return new Promise((resolve, reject) => {
+        registering({
+          account: account,
+          password: password,
+          password2: password2,
+          promo_code: promo_code,
+        })
+          .then((response) => {
+            const { data } = response;
+            console.log(response);
+            console.log(data.data.account);
+            resolve();
+          })
+          .catch((error) => reject(error));
       });
     },
   },

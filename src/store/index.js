@@ -5,8 +5,8 @@ import user from "./modules/user";
 const store = createStore({
   getters,
   modules: {
-    user,
-  },
+    user
+  }
 });
 
 export default store;

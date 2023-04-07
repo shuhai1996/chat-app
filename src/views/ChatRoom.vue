@@ -25,16 +25,16 @@ import { reactive } from "vue";
 import { getCookie } from "../utils/auth.js";
 const state = reactive({
   messages: [
-    { id: 1, username: "ChatGpt", text: "Hello", mine: false },
+    { id: 1, username: "Bot", text: "Hello", mine: false },
     { id: 2, username: "Me", text: "Hi", mine: true },
-    { id: 3, username: "ChatGpt", text: "How are you?", mine: false },
+    { id: 3, username: "Bot", text: "How are you?", mine: false },
     {
       id: 4,
       username: "Me",
       text: "I'm fine, thanks. And you?",
       mine: true,
     },
-    { id: 5, username: "ChatGpt", text: "I'm good too.", mine: false },
+    { id: 5, username: "Bot", text: "I'm good too.", mine: false },
   ],
   text: "",
   username: "Me",

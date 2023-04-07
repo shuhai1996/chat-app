@@ -10,6 +10,7 @@ import { View } from "@element-plus/icons-vue";
 
 import "./assets/main.css";
 import "element-plus/dist/index.css";
+
 const app = createApp(App);
 
 app.use(router, VueAxios, axios);
@@ -17,5 +18,4 @@ app.use(i18n);
 app.use(store);
 app.use(ElementPlus);
 app.component(View.name, View); // 全局注册 Edit 图标
-//app.config.globalProperties.$http = axios;
 app.mount("#app");
