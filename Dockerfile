@@ -10,6 +10,6 @@ FROM nginx
 
 RUN mkdir /app
 # 将文件copy到镜像app目录中
-COPY --from=0 /app/dist /app
+COPY --from=builder /app/dist /app
 # 暴露端口
 EXPOSE 9500
