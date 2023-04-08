@@ -73,103 +73,100 @@
 </template>
 
 <script>
-import router from "../router";
+import router from '../router'
 
 export default {
-  el: "#app",
+  el: '#app',
   data: function () {
     return {
       loginForm: {
-        account: "",
-        password: "",
+        account: '',
+        password: ''
       },
       registerForm: {
-        account: "",
+        account: '',
         password: {
-          type: "string",
-          required: true,
+          type: 'string',
+          required: true
         },
-        password2: "",
-        promo_code: "", //邀请码
+        password2: '',
+        promo_code: '' // 邀请码
       },
       loggedIn: false,
       registered: true,
-      messageToSend: "",
+      messageToSend: '',
       messages: [],
       ws: null,
-      passwordType: "password",
+      passwordType: 'password',
       rules: {
         password: [
           // { required: true, message: "请输入密码", trigger: "blur" },
-          { min: 8, max: 20, message: "长度在 6 到 30个字符",  trigger: "change" },
-        ],
-      },
-    };
+          { min: 8, max: 20, message: '长度在 6 到 30个字符', trigger: 'change' }
+        ]
+      }
+    }
   },
   methods: {
     loginSubmit: function () {
-      //提交登陆按钮
+      // 提交登陆按钮
       this.$store
-        .dispatch("user/login", this.loginForm)
+        .dispatch('user/login', this.loginForm)
         .then(() => {
-          router.replace("chatroom");
+          router.replace('chatroom')
         })
-        .catch(() => {});
+        .catch((error) => {
+          console.log(error)
+        })
     },
     register: function () {
-      this.registered = false;
+      this.registered = false
     },
     registerSubmit: function (registerFormRef) {
-      //提交注册按钮
-      console.log(registerFormRef);
+      // 提交注册按钮
+      console.log(registerFormRef)
       registerFormRef.validate((valid) => {
-        console.log(valid);
+        console.log(valid)
         if (valid) {
           this.$store
-            .dispatch("user/register", registerFormRef)
+            .dispatch('user/register', registerFormRef)
             .then(() => {
-              this.registered = true;
+              this.registered = true
             })
-            .catch(() => {});
+            .catch(() => {})
         } else {
-          console.log("error submit!");
-          return false;
+          console.log('error submit!')
+          return false
         }
-      });
-    },
-    logout: function () {
-      this.ws.send(JSON.stringify({ type: "logout" }));
-      this.ws.close();
-      this.loggedIn = false;
+      })
     },
     back: function () {
-      this.registered = true;
+      this.registered = true
     },
     validPassword: function (rule, value, callback) {
-      console.log(rule);
-      console.log(value);
+      console.log(rule)
+      console.log(value)
       if (value.length === 0) {
         // 自定义验证条件，返回错误提示文字
-        callback(new Error("请输入密码"));
+        callback(new Error('请输入密码'))
       }
 
-      let reg = /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{4,20}$/;
+      const reg = /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{4,20}$/
       if (!reg.test(value)) {
-        callback(new Error("密码必须是由4-20位字母+数字组合"));
+        callback(new Error('密码必须是由4-20位字母+数字组合'))
       } else {
-        callback();
+        callback()
       }
-    },
+    }
   },
   computed: {
-    isPasswordValid() {
-      return this.registerForm.password === this.registerForm.password2;
-    },
+    isPasswordValid () {
+      return this.registerForm.password === this.registerForm.password2
+    }
   },
-  mounted() {
-    //console.log(this.$store.getters);
-  },
-};
+  mounted () {
+    // console.log(this.$store.getters);
+  }
+}
 </script>
 
 <style lang="css">

@@ -1,22 +1,22 @@
-import { createI18n } from "vue-i18n";
-import Cookies from "js-cookie";
-import enLocale from "./en";
-import zhLocale from "./zh_CN";
+import { createI18n } from 'vue-i18n'
+import Cookies from 'js-cookie'
+import enLocale from './en'
+import zhLocale from './zh_CN'
 
 const messages = {
   en: {
-    ...enLocale,
+    ...enLocale
   },
   zh_CN: {
-    ...zhLocale,
-  },
-};
+    ...zhLocale
+  }
+}
 
 const i18n = createI18n({
-  locale: Cookies.get("lang") || "zh_CN", // set locale
+  locale: Cookies.get('lang') || 'zh_CN', // set locale
   messages, // set locale messages
   globalInjection: true,
-  legacy: false,
-});
+  legacy: false
+})
 
-export default i18n;
+export default i18n

@@ -1,12 +1,12 @@
-import { login, registering } from "../../api/user";
-import { setToken } from "../../utils/auth";
+import { getInfo, login, logout, registering } from '../../api/user'
+import { removeToken, setToken } from '../../utils/auth'
 
 const getDefaultState = () => {
   return {
-    access_token: "",
-    account: "",
-  };
-};
+    access_token: '',
+    account: ''
+  }
+}
 
 const user = {
   namespaced: true,
@@ -14,57 +14,88 @@ const user = {
   mutations: {
     // 变更状态
     RESET_STATE: (state) => {
-      Object.assign(state, getDefaultState());
+      Object.assign(state, getDefaultState())
     },
-    SET_TOKEN: (state, access_token) => {
-      state.access_token = access_token;
+    SET_TOKEN: (state, accessToken) => {
+      state.access_token = accessToken
     },
     SET_NAME: (state, account) => {
-      state.account = account;
-    },
+      state.account = account
+    }
   },
   actions: {
     // 用户登录
-    login({ commit }, userInfo) {
-      console.log(userInfo);
-      const { account, password } = userInfo;
+    login ({ commit }, userInfo) {
+      console.log(userInfo)
+      const { account, password } = userInfo
       return new Promise((resolve, reject) => {
-        login({ account: account, password: password })
+        login({ account, password })
           .then((response) => {
-            const { data } = response;
-            console.log(response);
-            console.log(data.data.token);
-            console.log(data.data.account);
-            commit("SET_TOKEN", data.data.token);
-            commit("SET_NAME", data.data.account);
-            setToken(data.data.token);
-            resolve();
+            const { data } = response
+            console.log(data)
+            commit('SET_TOKEN', data.token)
+            commit('SET_NAME', data.nickname)
+            setToken(data.token)
+            resolve()
           })
           .catch((error) => {
-            reject(error);
-          });
-      });
+            reject(error)
+          })
+      })
     },
-    register(commit, userInfo) {
-      console.log(userInfo);
-      const { account, password, password2, promo_code } = userInfo;
+    register ({ commit }, userInfo) {
+      console.log(userInfo)
+      const { account, password, password2, promoCode } = userInfo
       return new Promise((resolve, reject) => {
         registering({
-          account: account,
-          password: password,
-          password2: password2,
-          promo_code: promo_code,
+          account,
+          password,
+          password2,
+          promoCode
         })
           .then((response) => {
-            const { data } = response;
-            console.log(response);
-            console.log(data.data.account);
-            resolve();
+            const { data } = response
+            console.log(response)
+            console.log(data.account)
+            resolve()
           })
-          .catch((error) => reject(error));
-      });
+          .catch((error) => reject(error))
+      })
     },
-  },
-};
+    getInfo ({ commit }, token) {
+      return new Promise((resolve, reject) => {
+        getInfo()
+          .then((response) => {
+            const { data } = response
+            commit('SET_TOKEN', token)
+            commit('SET_NAME', data.nickname)
+            resolve()
+          })
+          .catch((error) => reject(error))
+      })
+    },
+    // remove token
+    resetToken ({ commit }) {
+      return new Promise(resolve => {
+        removeToken() // must remove  token  first
+        commit('RESET_STATE')
+        resolve()
+      })
+    },
+    // user logout
+    logout ({ commit, state }) {
+      return new Promise((resolve, reject) => {
+        logout()
+          .then(() => {
+            removeToken() // must remove  token  first
+            commit('RESET_STATE')
+            resolve()
+          }).catch(error => {
+            reject(error)
+          })
+      })
+    }
+  }
+}
 
-export default user;
+export default user

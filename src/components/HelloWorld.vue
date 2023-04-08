@@ -12,7 +12,7 @@ defineProps({
     <h1 class="green">{{ $t(msg) }}</h1>
     <h3>
       {{ $t("biaoyu")}}
-      <a href="https://vitejs.dev/" target="_blank" rel="noopener">Vue 3</a> +
+      <a href="https://cn.vuejs.org" target="_blank" rel="noopener">Vue 3</a> +
       <a href="https://github.com/theturtle32/WebSocket-Node" target="_blank" rel="noopener">WebSocket.</a>
     </h3>
   </div>

@@ -12,41 +12,42 @@
 </template>
 
 <script>
-import { setCookie, getCookie } from "../utils/auth.js";
+import { setCookie, getCookie } from '../utils/auth.js'
 export default {
   components: {},
-  data() {
+  data () {
     return {
-      locale: "zh_CN",
-      lang: "中文",
-    };
+      locale: 'zh_CN',
+      lang: 'EN'
+    }
   },
   computed: {},
-  mounted() {
-    if (getCookie("lang") === "zh_CN") {
-      this.locale = "zh_CN";
-      this.lang = "EN";
-    } else {
-      this.locale = "en";
-      this.lang = "中文";
+  mounted () {
+    if (getCookie('lang') === 'zh_CN') {
+      this.locale = 'zh_CN'
+      this.lang = 'EN'
+    }
+    if (getCookie('lang') === 'en') {
+      this.locale = 'en'
+      this.lang = '中文'
     }
   },
   methods: {
-    changeLang() {
-      self = this;
+    changeLang () {
+      const self = this
       // 增加传入语言
-      if (self.locale === "zh_CN") {
+      if (self.locale === 'zh_CN') {
         // self.lang = "ENG";
-        self.locale = "en";
+        self.locale = 'en'
       } else {
-        self.lang = "中文";
-        self.locale = "zh_CN";
+        self.lang = '中文'
+        self.locale = 'zh_CN'
       }
-      setCookie("lang", self.locale === "zh_CN" ? "zh_CN" : "en");
-      window.location.reload(); // 进行刷新改变页面翻译
-    },
-  },
-};
+      setCookie('lang', self.locale === 'zh_CN' ? 'zh_CN' : 'en')
+      window.location.reload() // 进行刷新改变页面翻译
+    }
+  }
+}
 </script>
 
 <style lang="scss" scoped>

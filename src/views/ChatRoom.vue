@@ -21,59 +21,96 @@
 </template>
 
 <script>
-import { reactive } from "vue";
-import { getCookie } from "../utils/auth.js";
+import { reactive } from 'vue'
+import { getCookie } from '../utils/auth.js'
+import router from '../router'
 const state = reactive({
   messages: [
-    { id: 1, username: "Bot", text: "Hello", mine: false },
-    { id: 2, username: "Me", text: "Hi", mine: true },
-    { id: 3, username: "Bot", text: "How are you?", mine: false },
-    {
-      id: 4,
-      username: "Me",
-      text: "I'm fine, thanks. And you?",
-      mine: true,
-    },
-    { id: 5, username: "Bot", text: "I'm good too.", mine: false },
   ],
-  text: "",
-  username: "Me",
-  lastId: 5,
-});
+  text: '',
+  username: '',
+  lastId: 0
+})
+let timer = null // 定时器
 export default {
   data: function () {
     return {
       messages: state.messages,
       text: state.text,
-    };
+      token: this.$store.getters.token,
+      username: this.$store.getters.username
+    }
   },
-  mounted() {
-    const input = document.getElementById("myInput");
-    if (getCookie("lang") === "zh_CN") {
-      //中文
-      input.setAttribute("placeholder", "在这里输入你的消息...");
+  mounted () {
+    const timeoutInterval = 15 * 60 * 1000 // 15分钟
+    console.log('token')
+    console.log(this.token)
+    console.log(this.username)
+    const input = document.getElementById('myInput')
+    if (getCookie('lang') === 'zh_CN') {
+      // 中文
+      input.setAttribute('placeholder', '在这里输入你的消息...')
     } else {
-      input.setAttribute("placeholder", "Type your message here...");
+      input.setAttribute('placeholder', 'Type your message here...')
+    }
+    // 连接 WebSocket 服务器
+    this.ws = new WebSocket(
+      import.meta.env.VITE_SOCKET_URL,
+      this.token
+    )
+    this.ws.onopen = function () {
+      timer = setTimeout(() => {
+        // 达到时间阈值，关闭WebSocket连接
+        this.close()
+      }, timeoutInterval)
+    }
+    this.ws.onmessage = function (event) {
+      // 接收到服务器响应，重置计时器
+      console.log(this)
+      clearTimeout(timer)
+      timer = setTimeout(() => {
+        // 达到时间阈值，关闭WebSocket连接
+        console.log(this)
+        this.close()
+      }, timeoutInterval)
+      const res = JSON.parse(event.data)
+      console.log(res)
+      state.lastId++
+      state.messages.push({
+        id: state.lastId,
+        username: 'ChatGpt',
+        text: res.message,
+        mine: false
+      })
+      state.text = ''
+    }
+    this.ws.onclose = () => {
+      // WebSocket连接已关闭，清除计时器
+      clearTimeout(timer)
+      console.log('退出了')
+      console.log(router)
+      this.$store.dispatch('user/logout')
+      router.replace('chat')
     }
   },
   methods: {
-    resizeTextarea(event) {
-      event.target.style.height = "auto";
-      event.target.style.height = event.target.scrollHeight + "px";
+    resizeTextarea (event) {
+      event.target.style.height = 'auto'
+      event.target.style.height = event.target.scrollHeight + 'px'
     },
-    sendMessage() {
-      console.log(this.text)
-      state.lastId++;
+    sendMessage () {
+      state.lastId++
       state.messages.push({
         id: state.lastId,
-        username: state.username,
+        username: this.username,
         text: this.text,
-        mine: true,
-      });
-      state.text = "";
-    },
-  },
-};
+        mine: true
+      })
+      this.ws.send(this.text)
+      state.text = ''
+    }
+  }
+}
 </script>
 
 <style lang="css">

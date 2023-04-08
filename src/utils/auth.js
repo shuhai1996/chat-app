@@ -1,23 +1,23 @@
 import Cookies from 'js-cookie'
 
-const TokenKey = "Authorization-Token";
+const TokenKey = 'Authorization-Token'
 
-export function setCookie(key, value) {
+export function setCookie (key, value) {
   return Cookies.set(key, value)
 }
 
-export function getCookie(key) {
+export function getCookie (key) {
   return Cookies.get(key)
 }
 
-export function getToken() {
+export function getToken () {
   return Cookies.get(TokenKey)
 }
 
-export function setToken(token) {
+export function setToken (token) {
   return Cookies.set(TokenKey, token)
 }
 
-export function removeToken() {
+export function removeToken () {
   return Cookies.remove(TokenKey)
 }
