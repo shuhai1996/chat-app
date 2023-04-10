@@ -9,7 +9,7 @@
           :class="{ 'chat__message--mine': message.mine }"
         >
           <div class="chat__message-user">{{ message.username }}</div>
-          <div class="chat__message-text">{{ message.text }}</div>
+          <div class="chat__message-text" v-html="message.text"></div>
         </div>
       </div>
       <div class="chat__input">
@@ -24,6 +24,8 @@
 import { reactive } from 'vue'
 import { getCookie } from '../utils/auth.js'
 import router from '../router'
+import { marked } from 'marked'
+
 const state = reactive({
   messages: [
   ],
@@ -79,7 +81,7 @@ export default {
       state.messages.push({
         id: state.lastId,
         username: 'ChatGpt',
-        text: res.message,
+        text: marked(res.message),
         mine: false
       })
       state.text = ''
@@ -108,6 +110,7 @@ export default {
       })
       this.ws.send(this.text)
       state.text = ''
+      this.text = ''
     }
   }
 }
@@ -119,6 +122,7 @@ export default {
   flex-direction: column;
   height: 150%;
   overflow-y: auto; /* 垂直方向上滚动 */
+  width: 480px;
 }
 
 .chat__messages {
@@ -134,6 +138,7 @@ export default {
   border-radius: 8px;
   background-color: #eee;
   word-wrap: break-word;
+  overflow-x: scroll;
 }
 
 .chat__message--mine {
@@ -147,6 +152,7 @@ export default {
 }
 
 .chat__message-text {
+  max-width: 600px;
   margin-top: 4px;
 }
 
