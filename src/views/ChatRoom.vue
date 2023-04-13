@@ -11,6 +11,7 @@
           <div class="chat__message-user">{{ message.username }}</div>
           <div class="chat__message-text" v-html="message.text"></div>
         </div>
+        <div :hidden = "!showLoading">正在思考中，请稍后...<img src="../assets/loading.gif" alt="loading" class="loading"></div>
       </div>
       <div class="chat__input">
         <textarea id="myInput" v-model="text" @input="resizeTextarea" />
@@ -25,6 +26,7 @@ import { reactive } from 'vue'
 import { getCookie } from '../utils/auth.js'
 import router from '../router'
 import { marked } from 'marked'
+import { responsiveMixin } from '../utils/app.js'
 
 const state = reactive({
   messages: [
@@ -33,18 +35,19 @@ const state = reactive({
   username: '',
   lastId: 0
 })
-let timer = null // 定时器
+
 export default {
+  mixins: [responsiveMixin],
   data: function () {
     return {
       messages: state.messages,
       text: state.text,
       token: this.$store.getters.token,
-      username: this.$store.getters.username
+      username: this.$store.getters.username,
+      showLoading: true
     }
   },
   mounted () {
-    const timeoutInterval = 15 * 60 * 1000 // 15分钟
     console.log('token')
     console.log(this.token)
     console.log(this.username)
@@ -61,22 +64,13 @@ export default {
       this.token
     )
     this.ws.onopen = function () {
-      timer = setTimeout(() => {
-        // 达到时间阈值，关闭WebSocket连接
-        this.close()
-      }, timeoutInterval)
     }
-    this.ws.onmessage = function (event) {
+    this.ws.onmessage = (event) => {
       // 接收到服务器响应，重置计时器
-      console.log(this)
-      clearTimeout(timer)
-      timer = setTimeout(() => {
-        // 达到时间阈值，关闭WebSocket连接
-        console.log(this)
-        this.close()
-      }, timeoutInterval)
+      console.log(this.ws)
       const res = JSON.parse(event.data)
       console.log(res)
+      state.messages.pop() // 把最后一个节点移除掉，重新添加一个干净的
       state.lastId++
       state.messages.push({
         id: state.lastId,
@@ -85,12 +79,10 @@ export default {
         mine: false
       })
       state.text = ''
+      this.toggleLoading()
     }
     this.ws.onclose = () => {
-      // WebSocket连接已关闭，清除计时器
-      clearTimeout(timer)
-      console.log('退出了')
-      console.log(router)
+      console.log('连接关闭')
       this.$store.dispatch('user/logout')
       router.replace('chat')
     }
@@ -111,6 +103,18 @@ export default {
       this.ws.send(this.text)
       state.text = ''
       this.text = ''
+      state.lastId++
+      state.messages.push({
+        id: state.lastId,
+        username: 'ChatGpt',
+        text: '',
+        mine: false
+      })
+      this.toggleLoading()
+    },
+    toggleLoading () {
+      this.showLoading = !this.showLoading
+      return true
     }
   }
 }
@@ -195,5 +199,10 @@ textarea {
   font-size: 16px;
   line-height: 1.5;
   resize: vertical;
+}
+
+.loading {
+  width: 1rem;
+  height: 1rem;
 }
 </style>

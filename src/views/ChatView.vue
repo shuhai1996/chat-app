@@ -17,9 +17,9 @@
         </el-form-item>
         <div class="bot">
           <el-button @click="loginSubmit">{{ $t("Login") }}</el-button>
-          <el-button style="float: right" @click="register">
-            {{ $t("Register") }}
-          </el-button>
+<!--          <el-button style="float: right" @click="register">-->
+<!--            {{ $t("Register") }}-->
+<!--          </el-button>-->
         </div>
       </el-form>
       <el-form
