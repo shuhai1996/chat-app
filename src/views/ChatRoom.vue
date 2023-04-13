@@ -26,7 +26,6 @@ import { reactive } from 'vue'
 import { getCookie } from '../utils/auth.js'
 import router from '../router'
 import { marked } from 'marked'
-import { responsiveMixin } from '../utils/app.js'
 
 const state = reactive({
   messages: [
@@ -37,7 +36,6 @@ const state = reactive({
 })
 
 export default {
-  mixins: [responsiveMixin],
   data: function () {
     return {
       messages: state.messages,
