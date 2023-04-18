@@ -68,16 +68,31 @@ export default {
       console.log(this.ws)
       const res = JSON.parse(event.data)
       console.log(res)
-      state.messages.pop() // 把最后一个节点移除掉，重新添加一个干净的
-      state.lastId++
-      state.messages.push({
-        id: state.lastId,
-        username: 'ChatGpt',
-        text: marked(res.message),
-        mine: false
-      })
-      state.text = ''
-      this.toggleLoading()
+      if (res.type === 'server') {
+        state.messages.pop() // 把最后一个节点移除掉，重新添加一个干净的
+        this.toggleLoading()
+        state.lastId++
+        state.messages.push({
+          id: state.lastId,
+          username: 'ChatGpt',
+          text: res.message,
+          mine: false
+        })
+        state.text = ''
+      } else if (res.message === '!!!Words finished!!!') {
+        this.toggleLoading()
+        state.text = ''
+      } else {
+        state.messages.pop() // 把最后一个节点移除掉，重新添加一个干净的
+        state.text += res.message
+        state.lastId++
+        state.messages.push({
+          id: state.lastId,
+          username: 'ChatGpt',
+          text: marked(state.text),
+          mine: false
+        })
+      }
     }
     this.ws.onclose = () => {
       console.log('连接关闭')
