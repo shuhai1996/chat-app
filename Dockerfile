@@ -7,7 +7,7 @@ RUN npm install && npm run build
 
 # 基础镜像 nginx
 FROM nginx
-
+ENV TZ=Asia/Shanghai
 RUN mkdir /app
 # 将文件copy到镜像app目录中
 COPY --from=builder /app/dist /app
